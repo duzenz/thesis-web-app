@@ -1,0 +1,96 @@
+body {
+	background: #eee !important;
+}
+
+.container {
+	background-color: #ffffff;
+	border-radius: 15px;
+	margin-top: 20px;
+	min-height: 600px;
+	width: 92%;
+}
+
+.wrapper {
+	margin-top: 80px;
+	margin-bottom: 80px;
+}
+
+.form-signin {
+	max-width: 350px;
+	padding: 0px 15px 45px;
+	background-color: #fff;
+}
+
+.checkbox {
+	font-weight: normal;
+}
+
+.login-error-container .alert {
+	width: 350px;
+}
+
+input[type="text"] {
+	margin-bottom: -1px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	width: 50%;
+}
+
+input[type="password"] {
+	margin-bottom: 20px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.recommender-navbar {
+	width: 92%;
+	margin: 0px auto;
+	border-radius: 10px;
+	margin-top: 5px;
+	background-color: #FFFFFF;
+}
+
+.form-container {
+	margin-top: 10px;
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 3000;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(255, 255, 255, .8) url('images/loading.gif') 50% 50%
+		no-repeat;
+}
+
+body.loading .modal {
+	display: block;
+}
+
+.fright {
+	float: right;
+}
+
+.not-visible {
+	display: none;
+}
+
+.pui-growl {
+	z-index: 3000;
+}
+
+.query-container-label {
+	margin-right: 5px;
+}
+
+.form-group .pui-listbox {
+	width:285px;
+}
+
+.recommend_save_btn {
+	margin-top:20px;
+	float:right;
+}

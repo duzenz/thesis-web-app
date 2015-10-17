@@ -1,0 +1,153 @@
+package com.duzenz.recommender.web.controllers;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
+import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
+import org.apache.mahout.cf.taste.model.DataModel;
+import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
+import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
+import org.apache.mahout.cf.taste.similarity.UserSimilarity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.duzenz.recommender.components.CbrRecommender;
+import com.duzenz.recommender.dao.TrackDao;
+import com.duzenz.recommender.dao.UserTrackDao;
+import com.duzenz.recommender.entities.Track;
+import com.duzenz.recommender.entities.UserTrack;
+import com.sun.org.apache.xpath.internal.functions.FuncBoolean;
+
+@Controller
+@RequestMapping("/rest/track/")
+public class TrackResource {
+
+	@Autowired
+	private TrackDao trackDao;
+	@Autowired
+    private UserTrackDao userTrackDao;
+	@Autowired
+	private CbrRecommender cbrRecommender;
+	
+
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<Track> findAll() {
+		return trackDao.findAll();
+	}
+
+	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Track findTrack(@PathVariable("id") int trackId) {
+		return trackDao.findTrack(trackId);
+	}
+
+	@RequestMapping(value = "lastfm/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Track findWithTrackId(@PathVariable("id") String trackId) {
+		return trackDao.findTrackWithLastFmId(trackId);
+	}
+
+	@RequestMapping(value = "/getTrackCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public long getTrackCount() {
+		return trackDao.getTrackCount();
+	}
+
+	@RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<Track> searchLabel(@RequestParam String query) {
+		return trackDao.searchTrack(query);
+	}
+	
+	@RequestMapping(value = "/recommendTrack", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<UserTrack> getUserBasedRecommendations(@RequestParam String userId,
+                                            @RequestParam String cfType, 
+                                            @RequestParam String age,
+                                            @RequestParam String country,
+                                            @RequestParam String gender,
+                                            @RequestParam String duration,
+                                            @RequestParam String selfview,
+                                            @RequestParam String tag, 
+                                            @RequestParam String release, 
+                                            @RequestParam String artistId, 
+                                            @RequestParam String trackId
+            ) {
+	    List <UserTrack> recommends = new ArrayList<UserTrack>();
+	    if (cfType.equals("user-based")) {
+	        recommends.addAll(getUserBasedRecommends(Integer.parseInt(userId)));
+	    }
+	    if (cfType.equals("item-based")) {
+	        recommends.addAll(getItemBasedRecommends(Integer.parseInt(trackId)));
+	    }
+	    //recommends.addAll(getCbrRecommendations(recommends, age, country, gender, duration, selfview, tag, release, artistId));
+	    return recommends;
+    }
+	
+	private List <UserTrack> getUserBasedRecommends(int userId) {
+	    List <UserTrack> recommends = new ArrayList<UserTrack>();
+	    try {
+            DataModel dm = new FileDataModel(new File("D:\\thesis\\recommenderApp\\data\\user_track.csv"));
+            UserSimilarity similarity = new LogLikelihoodSimilarity(dm);
+            UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.9, similarity, dm);
+            UserBasedRecommender recommender = new GenericUserBasedRecommender(dm, neighborhood, similarity);
+            List<RecommendedItem> recommendations = recommender.recommend(userId, 10);
+            for (RecommendedItem recommendation : recommendations) {
+                UserTrack selected = userTrackDao.findUserTrack((int) recommendation.getItemID());
+                selected.setRecommendationValue(recommendation.getValue());
+                selected.setRecommendationSource("user-based");
+                recommends.add(selected);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	    return recommends;
+    }
+	
+	private List <UserTrack> getItemBasedRecommends(int trackId) {
+	    List <UserTrack> recommends = new ArrayList<UserTrack>();
+	    try {
+	        DataModel dm = new FileDataModel(new File("D:\\thesis\\recommenderApp\\data\\user_track.csv"));
+            ItemSimilarity sim = new LogLikelihoodSimilarity(dm);
+            GenericItemBasedRecommender recommender = new GenericItemBasedRecommender(dm, sim);
+            List<RecommendedItem> recommendations = recommender.mostSimilarItems(trackId, 10);
+            for (RecommendedItem recommendation: recommendations) {
+                UserTrack selected = userTrackDao.findUserTrack((int) recommendation.getItemID());
+                selected.setRecommendationValue(recommendation.getValue());
+                selected.setRecommendationSource("item-based");
+                recommends.add(selected);
+            }
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	    }
+	    return recommends;
+	}
+	
+	private List<UserTrack> getCbrRecommendations(List<UserTrack> recommends, String age, String country, String gender, String duration, String selfview, String tag, String release, String artistId) {
+	    cbrRecommender.setAge(Integer.parseInt(age));
+	    cbrRecommender.setCountry(country);
+	    cbrRecommender.setGender(gender);
+	    cbrRecommender.setDuration(duration);
+	    cbrRecommender.setSelfview(selfview);
+	    cbrRecommender.setTag(tag);
+	    cbrRecommender.setRelease(Integer.parseInt(release));
+	    cbrRecommender.setArtistId(Integer.parseInt(artistId));
+	    System.out.println(cbrRecommender);
+	    return cbrRecommender.getCbrRecommendations();
+	}
+}
