@@ -74,6 +74,14 @@ body.loading .modal {
 	float: right;
 }
 
+.fleft {
+	float: left;
+}
+
+.fclear {
+	clear: both;
+}
+
 .not-visible {
 	display: none;
 }
@@ -87,7 +95,7 @@ body.loading .modal {
 }
 
 .form-group .pui-listbox {
-	width:285px;
+	width:200px;
 }
 
 .recommend_save_btn {

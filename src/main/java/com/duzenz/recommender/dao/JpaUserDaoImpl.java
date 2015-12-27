@@ -15,45 +15,65 @@ import com.duzenz.recommender.entities.User;
 
 @Repository
 @Transactional
-public class JpaUserDaoImpl implements UserDao 
-{
-	@PersistenceContext
-	private EntityManager em;
-	
-	@Override
-	@Transactional(readOnly=true)
-	public List<User> findAll() {
-		return em.createQuery("select u from User u", User.class).getResultList();
-	}
+public class JpaUserDaoImpl implements UserDao {
+    @PersistenceContext
+    private EntityManager em;
 
-	@Override
-	@Transactional(readOnly=true)
-	public User findUserById(int id) {
-		return em.find(User.class, id);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return em.createQuery("select u from User u", User.class).getResultList();
+    }
 
-	@Override
-	public User create(User user) {
-		if(user.getId() <= 0){
-			em.persist(user);
-		} else {
-			user = em.merge(user);
-		}
-		return user;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public User findUserById(int id) {
+        return em.find(User.class, id);
+    }
 
-	@Override
-	public User login(String email, String password) {
-		TypedQuery<User> query = em.createQuery("select u from User u where u.email=?1 and u.password=?2", User.class);
-		query.setParameter(1, email);
-		query.setParameter(2, password);
-		try {
-			return query.getSingleResult();
-		} catch (NonUniqueResultException|NoResultException e) {
-			return null;
-		}
-		
-	}
-	
+    @Override
+    public User create(User user) {
+        if (user.getId() <= 0) {
+            em.persist(user);
+        } else {
+            user = em.merge(user);
+        }
+        return user;
+    }
+
+    @Override
+    public User login(String email, String password) {
+        TypedQuery<User> query = em.createQuery("select u from User u where u.email=?1 and u.password=?2", User.class);
+        query.setParameter(1, email);
+        query.setParameter(2, password);
+        try {
+            return query.getSingleResult();
+        } catch (NonUniqueResultException | NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isOldPasswordCorrect(String password, int userId) {
+        User user = findUserById(userId);
+        if (user.getPassword().equals(password)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean changePassword(String password, int userId) {
+        User user = findUserById(userId);
+        user.setPassword(password);
+        try {
+            em.persist(user);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
 }
-

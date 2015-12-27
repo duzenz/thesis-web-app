@@ -8,15 +8,7 @@
 <c:url var="rootURL" value="/" />
 
 <script type="text/javascript">
-	window.session = {};
-	window.session.user = <%=UserController.getCurrentUserJson() %>;
+    window.session = {};
+    window.session.user = <%=UserController.getCurrentUserJson()%>
 </script>
-
-<!--  
- taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
-page import="com.huawei.is.vtag.web.controllers.UserController"%>
-<c:set var="req" value="${pageContext.request}" />
-<c:set var="uri" value="${req.requestURI}" />
-<c:url var="rootURL" value="/" />
--->
 

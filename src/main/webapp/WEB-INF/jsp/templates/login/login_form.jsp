@@ -8,19 +8,15 @@
         <div class="account-wall">
             <form:form id="loginForm" method="post" action="${rootURL}login" modelAttribute="user" class="form-signin form-horizontal" role="form">
                 <div class="form-group">
-                    <label>
-                        <spring:message code="login.username" />
-                    </label>
-                    <input type="text" id="username" name="username" class="form-control" placeholder="<spring:message code='login.username'/>" required autofocus />
+                    <label> <spring:message code="login.username" />
+                    </label> <input type="text" id="username" name="username" class="form-control" placeholder="<spring:message code='login.username'/>" required autofocus />
                 </div>
                 <div class="form-group">
-                    <label>
-                        <spring:message code="login.username" />
-                    </label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="<spring:message code="login.password"/>" required />
+                    <label> <spring:message code="login.password" />
+                    </label> <input type="password" id="password" name="password" class="form-control" placeholder="<spring:message code="login.password"/>" required />
                 </div>
                 <div class="form-group fright">
-                    <button class="btn btn-primary" type="submit">
+                    <button id="login_btn" class="btn btn-primary" type="submit">
                         <spring:message code="login.submit" />
                     </button>
                 </div>

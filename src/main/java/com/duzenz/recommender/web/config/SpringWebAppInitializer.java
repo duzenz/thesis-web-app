@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.duzenz.recommender.web.config;
 
 import javax.servlet.Filter;
@@ -11,38 +8,27 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import com.duzenz.recommender.config.AppConfig;
 
-/**
- * @author Siva
- *
- */
-public class SpringWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer
-{
+public class SpringWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-	@Override
-	protected Class<?>[] getRootConfigClasses()
-	{
-		return new Class<?>[] { AppConfig.class};
-	}
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class<?>[] { AppConfig.class };
+    }
 
-	@Override
-	protected Class<?>[] getServletConfigClasses()
-	{
-		return new Class<?>[] { WebMvcConfig.class };
-	}
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class<?>[] { WebMvcConfig.class };
+    }
 
-	@Override
-	protected String[] getServletMappings()
-	{
+    @Override
+    protected String[] getServletMappings() {
 
-		return new String[] { "/" };
-	}
+        return new String[] { "/" };
+    }
 
-	@Override
+    @Override
     protected Filter[] getServletFilters() {
-       return new Filter[]{ 
-    		   new DelegatingFilterProxy("springSecurityFilterChain"),
-    		   new OpenEntityManagerInViewFilter()};
-    } 
-
+        return new Filter[] { new DelegatingFilterProxy("springSecurityFilterChain"), new OpenEntityManagerInViewFilter() };
+    }
 
 }

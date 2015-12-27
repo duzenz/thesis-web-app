@@ -21,18 +21,18 @@ import com.duzenz.recommender.dao.UserTrackDao;
 import com.duzenz.recommender.entities.UserTrack;
 
 public class CollaborativeFiltering {
-    
+
     @Autowired
     private UserTrackDao userTrackDao;
-    
-    public List <UserTrack> getUserBasedRecommends(int userId) {
+
+    public List<UserTrack> getUserBasedRecommends(int userId) {
         try {
             DataModel dm = new FileDataModel(new File("D:\\thesis\\recommenderApp\\data\\user_track.csv"));
             UserSimilarity similarity = new LogLikelihoodSimilarity(dm);
             UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.9, similarity, dm);
             UserBasedRecommender recommender = new GenericUserBasedRecommender(dm, neighborhood, similarity);
             List<RecommendedItem> recommendations = recommender.recommend(userId, 10);
-            List <UserTrack> items = new ArrayList<UserTrack>();
+            List<UserTrack> items = new ArrayList<UserTrack>();
             for (RecommendedItem recommendation : recommendations) {
                 UserTrack selected = userTrackDao.findUserTrack((int) recommendation.getItemID());
                 selected.setRecommendationValue(recommendation.getValue());
@@ -44,21 +44,21 @@ public class CollaborativeFiltering {
             return null;
         }
     }
-    
-    public List <UserTrack> getItemBasedRecommends(int trackId) {
+
+    public List<UserTrack> getItemBasedRecommends(int trackId) {
         try {
             DataModel dm = new FileDataModel(new File("D:\\thesis\\recommenderApp\\data\\user_track.csv"));
             ItemSimilarity sim = new LogLikelihoodSimilarity(dm);
             GenericItemBasedRecommender recommender = new GenericItemBasedRecommender(dm, sim);
             List<RecommendedItem> recommendations = recommender.mostSimilarItems(trackId, 10);
-            List <UserTrack> items = new ArrayList<UserTrack>();
-            for (RecommendedItem recommendation: recommendations) {
+            List<UserTrack> items = new ArrayList<UserTrack>();
+            for (RecommendedItem recommendation : recommendations) {
                 UserTrack selected = userTrackDao.findUserTrack((int) recommendation.getItemID());
                 selected.setRecommendationValue(recommendation.getValue());
                 items.add(selected);
             }
             return items;
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

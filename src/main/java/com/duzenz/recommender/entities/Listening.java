@@ -1,7 +1,9 @@
 package com.duzenz.recommender.entities;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,70 +11,75 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-@Table(name="lastfm")
-public class Listening 
-{
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	private int id;
-	
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private DataUser user;
-	
-	@ManyToOne
-	@JoinColumn(name = "track_id")
-	private Track track;
-	
-	@ManyToOne
-	@JoinColumn(name = "artist_id")
-	private Artist artist;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date time;
+@Table(name = "lastfm")
+public class Listening {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
-	public int getId() {
-		return id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private DataUser user;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "track_id")
+    private Track track;
 
-	public DataUser getUser() {
-		return user;
-	}
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(nullable = false)
+    private Date time;
 
-	public void setUser(DataUser user) {
-		this.user = user;
-	}
+    @Transient
+    private String recommendSource;
 
-	public Track getTrack() {
-		return track;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setTrack(Track track) {
-		this.track = track;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public Artist getArtist() {
-		return artist;
-	}
+    public DataUser getUser() {
+        return user;
+    }
 
-	public void setArtist(Artist artist) {
-		this.artist = artist;
-	}
+    public void setUser(DataUser user) {
+        this.user = user;
+    }
 
-	public Date getTime() {
-		return time;
-	}
+    public Track getTrack() {
+        return track;
+    }
 
-	public void setTime(Date time) {
-		this.time = time;
-	}
+    public void setTrack(Track track) {
+        this.track = track;
+    }
+
+    public String getTime() {
+        return (String) new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public String getRecommendSource() {
+        return recommendSource;
+    }
+
+    public void setRecommendSource(String recommendSource) {
+        this.recommendSource = recommendSource;
+    }
+
+    @Override
+    public String toString() {
+        return "Listening [id=" + id + ", user=" + user + ", track=" + track + ", time=" + time + ", recommendSource=" + recommendSource + "]";
+    }
 
 }
-

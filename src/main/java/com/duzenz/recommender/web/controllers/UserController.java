@@ -1,12 +1,16 @@
 package com.duzenz.recommender.web.controllers;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
 import com.duzenz.recommender.dao.DataUserDao;
 import com.duzenz.recommender.entities.DataUser;
+import com.duzenz.recommender.entities.Role;
 import com.duzenz.recommender.entities.User;
 import com.duzenz.recommender.services.UserService;
 import com.duzenz.recommender.web.config.SecurityUser;
@@ -42,14 +46,32 @@ public class UserController {
         if (user != null) {
             System.out.println(user.getId());
             int userId = user.getId();
-            if (userId != 0) {
+            boolean isAdmin = isUserAdmin();
+            if (userId != 0 && user.getRoles().size() > 0 && !isAdmin) {
                 DataUser dataUser = dataUserDao.findwithLastFmId("" + user.getId());
                 if (dataUser != null) {
-                    return "{'userId':" + user.getId() + ",'age':" + dataUser.getAge() + ",'country':'" + dataUser.getCountry() + "', 'gender':'" + dataUser.getGender() + "'}";
+                    return "{'userId':" + user.getId() + ",'age':" + dataUser.getAge() + ",'register':" + dataUser.getRegisterCol() + ",'country':'" + dataUser.getCountry() + "', 'gender':'" + dataUser.getGender() + "'}";
                 }
+            }
+            if (isAdmin) {
+                return "{'userId':" + user.getId() + "}";
             }
         }
         return "{}";
+    }
+
+    public static boolean isUserAdmin() {
+        User user = getCurrentUser();
+        Set<Role> userRoles = user.getRoles();
+
+        if (userRoles != null) {
+            for (Role role : userRoles) {
+                if (role.getRoleName().equals("ROLE_ADMIN")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

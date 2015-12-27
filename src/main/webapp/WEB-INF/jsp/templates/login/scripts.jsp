@@ -9,10 +9,10 @@
 <script type="text/javascript" src="${rootURL}resources/js/views/RegisterView.js"></script>
 <script type="text/javascript" src="${rootURL}resources/js/models/RegisterModel.js"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		$('#register_age').puidropdown();
-		$('#register_country').puidropdown();
-		$('#register_gender').puidropdown();
-		RegisterView = new RegisterView();
-	});
+    $(document).ready(function() {
+        $('#register_age').puidropdown();
+        $('#register_country').puidropdown();
+        $('#register_gender').puidropdown();
+        RegisterView = new RegisterView();
+    });
 </script>

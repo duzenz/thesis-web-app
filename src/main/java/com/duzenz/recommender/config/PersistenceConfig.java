@@ -1,8 +1,4 @@
-/**
- * 
- */
 package com.duzenz.recommender.config;
-
 
 import java.util.Properties;
 
@@ -27,77 +23,68 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-/**
- * @author Siva
- *
- */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages="com.duzenz.recommender.repositories")
+@EnableJpaRepositories(basePackages = "com.duzenz.recommender.repositories")
 public class PersistenceConfig {
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	@Value("${init-db:false}")
-	private String initDatabase;
-	
-	@Bean
-	public PlatformTransactionManager transactionManager()
-	{
-		EntityManagerFactory factory = entityManagerFactory().getObject();
-		return new JpaTransactionManager(factory);
-	}
+    @Value("${init-db:false}")
+    private String initDatabase;
 
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory()
-	{
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        EntityManagerFactory factory = entityManagerFactory().getObject();
+        return new JpaTransactionManager(factory);
+    }
 
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setGenerateDdl(Boolean.TRUE);
-		vendorAdapter.setShowSql(Boolean.TRUE);
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 
-		factory.setDataSource(dataSource());
-		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("com.duzenz.recommender.entities");
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        vendorAdapter.setGenerateDdl(Boolean.TRUE);
+        vendorAdapter.setShowSql(Boolean.TRUE);
 
-		Properties jpaProperties = new Properties();
-		jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-		factory.setJpaProperties(jpaProperties);
+        factory.setDataSource(dataSource());
+        factory.setJpaVendorAdapter(vendorAdapter);
+        factory.setPackagesToScan("com.duzenz.recommender.entities");
 
-		factory.afterPropertiesSet();
-		factory.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
-		return factory;
-	}
+        Properties jpaProperties = new Properties();
+        jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+        factory.setJpaProperties(jpaProperties);
 
-	@Bean
-	public HibernateExceptionTranslator hibernateExceptionTranslator()
-	{
-		return new HibernateExceptionTranslator();
-	}
-	
-	@Bean
-	public DataSource dataSource()
-	{
-		BasicDataSource dataSource = new BasicDataSource();
-		dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-		dataSource.setUrl(env.getProperty("jdbc.url"));
-		dataSource.setUsername(env.getProperty("jdbc.username"));
-		dataSource.setPassword(env.getProperty("jdbc.password"));
-		return dataSource;
-	}
-	
-	@Bean
-	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) 
-	{
-		System.out.println("**************************"+initDatabase);
-		DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
-		dataSourceInitializer.setDataSource(dataSource);
-		ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-		databasePopulator.addScript(new ClassPathResource("db.sql"));
-		dataSourceInitializer.setDatabasePopulator(databasePopulator);
-		dataSourceInitializer.setEnabled(Boolean.parseBoolean(initDatabase));
-		return dataSourceInitializer;
-	}	
+        factory.afterPropertiesSet();
+        factory.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
+        return factory;
+    }
+
+    @Bean
+    public HibernateExceptionTranslator hibernateExceptionTranslator() {
+        return new HibernateExceptionTranslator();
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
+        dataSource.setUrl(env.getProperty("jdbc.url"));
+        dataSource.setUsername(env.getProperty("jdbc.username"));
+        dataSource.setPassword(env.getProperty("jdbc.password"));
+        return dataSource;
+    }
+
+    @Bean
+    public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+        System.out.println("**************************" + initDatabase);
+        DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
+        dataSourceInitializer.setDataSource(dataSource);
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.addScript(new ClassPathResource("db.sql"));
+        dataSourceInitializer.setDatabasePopulator(databasePopulator);
+        dataSourceInitializer.setEnabled(Boolean.parseBoolean(initDatabase));
+        return dataSourceInitializer;
+    }
 }

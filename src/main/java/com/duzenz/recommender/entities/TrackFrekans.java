@@ -10,41 +10,41 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="track_frekans")
-public class TrackFrekans 
-{
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	private int id;
-	
-	@ManyToOne
-	@JoinColumn(name = "track_id")
-	private Track track;
-	
-	@Column(name="listen_count")
-	private int listenCount;
-	
-	public int getId() {
-		return id;
-	}
+@Table(name = "track_frekans")
+public class TrackFrekans {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "track_id")
+    private Track track;
 
-	public Track getTrack() {
-		return track;
-	}
+    @Column(name = "listen_count")
+    private int listenCount;
 
-	public void setTrack(Track track) {
-		this.track = track;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getListenCount() {
-		return listenCount;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setListenCount(int listenCount) {
-		this.listenCount = listenCount;
-	}
+    public Track getTrack() {
+        return track;
+    }
+
+    public void setTrack(Track track) {
+        this.track = track;
+    }
+
+    public int getListenCount() {
+        return listenCount;
+    }
+
+    public void setListenCount(int listenCount) {
+        this.listenCount = listenCount;
+    }
 
 }

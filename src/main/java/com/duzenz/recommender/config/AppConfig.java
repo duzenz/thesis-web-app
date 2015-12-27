@@ -1,8 +1,4 @@
-/**
- * 
- */
 package com.duzenz.recommender.config;
-
 
 import java.util.Properties;
 
@@ -21,49 +17,42 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * @author Siva
- *
- */
 @Configuration
-@ComponentScan(basePackages={"com.duzenz.recommender"},
-		excludeFilters=@ComponentScan.Filter(type=FilterType.REGEX, pattern={"com.duzenz.recommender.web.*"}))
+@ComponentScan(basePackages = { "com.duzenz.recommender" }, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = { "com.duzenz.recommender.web.*" }))
 @PropertySource(value = { "classpath:application.properties" })
 @EnableScheduling
 @EnableAspectJAutoProxy
 @EnableCaching
 public class AppConfig {
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer()
-	{
-		return new PropertySourcesPlaceholderConfigurer();
-	}
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
-	@Bean
-	public CacheManager cacheManager()
-	{
-		return new ConcurrentMapCacheManager();
-	}
-	
-	@Bean
-	public JavaMailSenderImpl javaMailSenderImpl() {
-		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
-		mailSenderImpl.setHost(env.getProperty("smtp.host"));
-		mailSenderImpl.setPort(env.getProperty("smtp.port", Integer.class));
-		mailSenderImpl.setProtocol(env.getProperty("smtp.protocol"));
-		mailSenderImpl.setUsername(env.getProperty("smtp.username"));
-		mailSenderImpl.setPassword(env.getProperty("smtp.password"));
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
+    }
 
-		Properties javaMailProps = new Properties();
-		javaMailProps.put("mail.smtp.auth", true);
-		javaMailProps.put("mail.smtp.starttls.enable", true);
+    @Bean
+    public JavaMailSenderImpl javaMailSenderImpl() {
+        JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
+        mailSenderImpl.setHost(env.getProperty("smtp.host"));
+        mailSenderImpl.setPort(env.getProperty("smtp.port", Integer.class));
+        mailSenderImpl.setProtocol(env.getProperty("smtp.protocol"));
+        mailSenderImpl.setUsername(env.getProperty("smtp.username"));
+        mailSenderImpl.setPassword(env.getProperty("smtp.password"));
 
-		mailSenderImpl.setJavaMailProperties(javaMailProps);
+        Properties javaMailProps = new Properties();
+        javaMailProps.put("mail.smtp.auth", true);
+        javaMailProps.put("mail.smtp.starttls.enable", true);
 
-		return mailSenderImpl;
-	}
+        mailSenderImpl.setJavaMailProperties(javaMailProps);
+
+        return mailSenderImpl;
+    }
 }

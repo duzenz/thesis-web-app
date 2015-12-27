@@ -10,71 +10,87 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "track")
 public class Track {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
-	@Column(nullable = false, unique = true, name = "track_id")
-	private String trackId;
+    @Column(nullable = false, unique = true, name = "track_id")
+    private String trackId;
 
-	@Column(name = "track_name")
-	private String trackName;
+    @Column(name = "track_name")
+    private String trackName;
 
-	@Column(name = "is_requested_blob", columnDefinition = "int default '0'")
-	private int isRequestedBlob;
+    @Column(name = "duration")
+    private String duration;
 
-	@Column(name = "blob_content", columnDefinition = "blob")
-	private String blobContent;
+    @Column(name = "listener")
+    private String listener;
 
-	@Column(name = "artist_mbid")
-	private String artistMbid;
+    @Column(name = "play_count")
+    private String playCount;
 
-	public int getId() {
-		return id;
-	}
+    @Column(name = "tags")
+    private String tags;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Column(name = "track_url")
+    private String trackUrl;
 
-	public int getIsRequestedBlob() {
-		return isRequestedBlob;
-	}
+    @Column(name = "artist_name")
+    private String artistName;
 
-	public void setIsRequestedBlob(int isRequestedBlob) {
-		this.isRequestedBlob = isRequestedBlob;
-	}
+    @Column(name = "artist_mbid")
+    private String artistMbid;
 
-	public String getBlobContent() {
-		return blobContent;
-	}
+    @Column(name = "artist_url")
+    private String artistUrl;
 
-	public void setBlobContent(String blobContent) {
-		this.blobContent = blobContent;
-	}
+    @Column(name = "album_title")
+    private String albumTitle;
 
-	public String getTrackId() {
-		return trackId;
-	}
+    @Column(name = "album_mbid")
+    private String albumMbid;
 
-	public void setTrackId(String trackId) {
-		this.trackId = trackId;
-	}
+    @Column(name = "album_url")
+    private String albumUrl;
 
-	public String getTrackName() {
-		return trackName;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setTrackName(String trackName) {
-		this.trackName = trackName;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getArtistMbid() {
-		return artistMbid;
-	}
+    public String getTrackId() {
+        return trackId;
+    }
 
-	public void setArtistMbid(String artistMbid) {
-		this.artistMbid = artistMbid;
-	}
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+    }
+
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
+    }
+
+    public String getArtistMbid() {
+        return artistMbid;
+    }
+
+    public void setArtistMbid(String artistMbid) {
+        this.artistMbid = artistMbid;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
 }

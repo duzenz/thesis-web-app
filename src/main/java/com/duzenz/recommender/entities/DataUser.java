@@ -8,80 +8,100 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="lastfm_users")
-public class DataUser 
-{
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	private int id;
-	
-	@Column(nullable=false, unique=true, name = "user_id")
-	private String userId;
-	
-	@Column(name = "gender")
-	private String gender;
-	
-	@Column(name="age")
-	private int age;
-	
-	@Column(name = "country")
-	private String country;
-	
-	@Column(name = "registered")
-	private String registered;
+@Table(name = "lastfm_users")
+public class DataUser {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
-	@Override
-	public String toString() {
-		return "DataUser [id=" + id + ", userId=" + userId + ", gender="
-				+ gender + ", age=" + age + ", country=" + country
-				+ ", registered=" + registered + "]";
-	}
+    @Column(nullable = false, unique = true, name = "user_id")
+    private String userId;
 
-	public int getId() {
-		return id;
-	}
+    @Column(name = "gender")
+    private String gender;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Column(name = "age")
+    private int age;
 
-	public String getUserId() {
-		return userId;
-	}
+    @Column(name = "country")
+    private String country;
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    @Column(name = "registered")
+    private String registered;
 
-	public String getGender() {
-		return gender;
-	}
+    @Column(name = "age_col")
+    private String ageCol;
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    @Column(name = "register_col")
+    private String registerCol;
 
-	public int getAge() {
-		return age;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public String getRegistered() {
-		return registered;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public void setRegistered(String registered) {
-		this.registered = registered;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(String registered) {
+        this.registered = registered;
+    }
+
+    public String getAgeCol() {
+        return ageCol;
+    }
+
+    public void setAgeCol(String ageCol) {
+        this.ageCol = ageCol;
+    }
+
+    public String getRegisterCol() {
+        return registerCol;
+    }
+
+    public void setRegisterCol(String registerCol) {
+        this.registerCol = registerCol;
+    }
+
+    @Override
+    public String toString() {
+        return "DataUser [id=" + id + ", userId=" + userId + ", gender=" + gender + ", age=" + age + ", country=" + country + ", registered=" + registered + ", ageCol=" + ageCol + ", registerCol=" + registerCol + "]";
+    }
 
 }

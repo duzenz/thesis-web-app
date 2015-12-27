@@ -1,6 +1,7 @@
 package com.duzenz.recommender.components;
 
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.duzenz.recommender.dao.UserTrackDao;
+import com.duzenz.recommender.entities.Listening;
 import com.duzenz.recommender.entities.UserTrack;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
@@ -25,202 +27,37 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 @Component
 public class CbrRecommender {
-    
+
     @Autowired
     private UserTrackDao userTrackDao;
 
-    final String OWL_FILE_URL = "D:\\thesis\\recommenderApp\\data\\test_cbr.owl";
-    final String namespace = "http://www.example.com/ontologies/recommend.owl#";
-    final String caseClassName = "RECOMMEND_CASE";
-    public static boolean ASC = true;
-    public static boolean DESC = false;
+    public static final String cbrDataFilePath = "D:\\thesis\\recommenderApp\\data\\training_cbr.owl";
+    public static final String namespace = "http://www.example.com/ontologies/recommend.owl#";
 
     private String age;
     private String country;
     private String gender;
-    private String duration;
-    private String selfview;
+    private String register;
+    private int userId;
     private List<String> tag;
-    private String release;
-    private String artistId;
 
-    OntModel model = null;
-    OntClass caseClass = null;
-    List<String> propertyList = new ArrayList<String>();
-    List<String> instanceList = new ArrayList<String>();
-    Map<String, Integer> distanceMap = new HashMap<String, Integer>();
-    InputStream in = null;
-    List <UserTrack> cbrRecommends = new ArrayList<UserTrack>();
-
-    public List <UserTrack> getCbrRecommendations() {
-        model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        try {
-            in = new FileInputStream(OWL_FILE_URL);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        model.read(in, null);
-        caseClass = (OntClass) model.getOntClass(namespace + caseClassName);
-        setPropertyList(caseClass);
-        setInstanceList(caseClass);
-        getCaseBasedReasonings();
-        return cbrRecommends;
-    }
-
-    public void setPropertyList(OntClass caseClass) {
-        ExtendedIterator props = caseClass.listDeclaredProperties();
-        while (props.hasNext()) {
-            propertyList.add(props.next().toString());
-        }
-    }
-
-    public void setInstanceList(OntClass caseClass) {
-        ExtendedIterator instances = caseClass.listInstances();
-        while (instances.hasNext()) {
-            instanceList.add(instances.next().toString());
-        }
-    }
-
-    public Individual createNewIndividual(OntClass caseClass) {
-        Individual newIndividual = model.createIndividual(namespace + "I" + instanceList.size() + 1, caseClass);
-        if (age.length() > 0) {
-            newIndividual.addProperty(model.getProperty(namespace + "HAS-AGE"), model.createTypedLiteral(age));
-        }
-        if (country.length() > 0) {
-            newIndividual.addProperty(model.getProperty(namespace + "HAS-COUNTRY"), model.createTypedLiteral(country));
-        }
-        if (gender.length() > 0) {
-            newIndividual.addProperty(model.getProperty(namespace + "HAS-GENDER"), model.createTypedLiteral(gender));
-        }
-        if (selfview.length() > 0) {
-            newIndividual.addProperty(model.getProperty(namespace + "HAS-SELF_VIEW"), model.createTypedLiteral(selfview));
-        }
-        if (duration.length() > 0) {
-            newIndividual.addProperty(model.getProperty(namespace + "HAS-DURATION"), model.createTypedLiteral(duration));
-        }
-        if (artistId.length() > 0) {
-            newIndividual.addProperty(model.getObjectProperty(namespace + "HAS-ARTIST"), model.createTypedLiteral(artistId));
-        }
-        if (release.length() > 0) {
-            newIndividual.addProperty(model.getObjectProperty(namespace + "HAS-RELEASE_DATE"), model.createTypedLiteral(release));
-        }
-        if (tag.size() > 0) {
-            for (String t : tag) {
-                ObjectProperty tagProp = model.getObjectProperty(namespace + t.toString().replace("\"", "").replaceAll("\\s+", "_").replaceAll("#", ""));
-                newIndividual.addProperty(tagProp, "true");
-            }
-        }
-
-        return newIndividual;
-    }
-
-    public void getCaseBasedReasonings() {
-
-        try {
-            Individual newIndividual = createNewIndividual(caseClass);
-            int counter = 0;
-            for (String instance : instanceList) {
-                Individual selectedInstance = model.getIndividual(instance);
-                if (!selectedInstance.equals(namespace + "I" + instanceList.size() + 1)) {
-                    counter++;
-                    compareProperties(selectedInstance, newIndividual);
-                }
-                //System.out.println(counter);
-                //if (counter > 10) {
-                //    break;
-                //}
-            }
-
-            //printDistances();
-            cbrRecommends = getUserTracksOfRecommends();
-
-            // TODO inference usage
-            // TODO after save selected one
-
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void compareProperties(Individual selectedIndividual, Individual newIndividual) {
-
-        int value = 0;
-        for (String prop : propertyList) {
-
-            Property p = model.getOntProperty(prop);
-
-            RDFNode selectedInstancePropVal = selectedIndividual.getPropertyValue(p);
-            RDFNode newInstancePropVal = newIndividual.getPropertyValue(p);
-
-            if (selectedInstancePropVal != null && newInstancePropVal != null && selectedInstancePropVal.equals(newInstancePropVal)) {
-                // System.out.println(prop);
-                // System.out.println(selectedInstancePropVal);
-                // System.out.println(newInstancePropVal);
-                String propName = p.getLocalName();
-                if (propName.equals("HAS-ARTIST")) {
-                    value += 5;
-                } else if (propName.equals("HAS-AGE") || propName.equals("HAS-GENDER") || propName.equals("HAS-COUNTRY")) {
-                    value += 1;
-                } else {
-                    value += 3;
-                }
-            }
-        }
-        distanceMap.put(selectedIndividual.getLocalName(), value);
-    }
-
-    public void printDistances() {
-        //System.out.println("After sorting descendeng order......");
-        Map<String, Integer> sortedMapDesc = sortByComparator(distanceMap, DESC);
-        printMap(sortedMapDesc, 10);
-    }
-    
-    
-    
-    public List <UserTrack> getUserTracksOfRecommends() {
-        Map<String, Integer> sortedMapDesc = sortByComparator(distanceMap, DESC);
-        List <UserTrack> recommends = new ArrayList<UserTrack>();
-        int counter = 0;
-        for (Map.Entry<String, Integer> entry : sortedMapDesc.entrySet()) {
-            UserTrack selected = userTrackDao.findUserTrack(Integer.parseInt(entry.getKey().substring(1)));
-            selected.setRecommendationSource("cbr");
-            selected.setRecommendationValue(entry.getValue());
-            recommends.add(selected);
-            counter++;
-            if (counter > 10) {
-                break;
-            }
-        }
-        return recommends;
-    }
+    public ObjectProperty ageProp;
+    public ObjectProperty registerProp;
+    public ObjectProperty genderProp;
+    public ObjectProperty countryProp;
 
     public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
-        if (age == 0) {
-            this.age = "";
-        } else if (age <= 17) {
-            this.age = "0-17";
-        } else if (age > 17 && age <= 24) {
-            this.age = "18-24";
-        } else if (age > 24 && age <= 30) {
-            this.age = "25-30";
-        } else if (age > 30 && age <= 40) {
-            this.age = "31-40";
-        } else if (age > 40 && age <= 50) {
-            this.age = "41-50";
-        } else {
-            this.age = "51-100";
-        }
+    public void setAge(String age) {
+        this.age = age;
     }
 
     public String getCountry() {
@@ -239,40 +76,16 @@ public class CbrRecommender {
         this.gender = gender;
     }
 
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        if (duration.equals("duration_short")) {
-            this.duration = "short";
-        } else if (duration.equals("duration_normal")) {
-            this.duration = "normal";
-        } else if (duration.equals("duration_long")) {
-            this.duration = "long";
-        } else {
-            this.duration = "";
-        }
-    }
-
-    public String getSelfview() {
-        return selfview;
-    }
-
-    public void setSelfview(String selfview) {
-        if (selfview.equals("selfview_few")) {
-            this.selfview = "few";
-        } else if (selfview.equals("selfview_average")) {
-            this.selfview = "normal";
-        } else if (selfview.equals("selview_many")) {
-            this.selfview = "many";
-        } else {
-            this.selfview = "";
-        }
-    }
-
     public List<String> getTag() {
         return tag;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setTag(String tag) {
@@ -280,35 +93,173 @@ public class CbrRecommender {
         this.tag = items;
     }
 
-    public String getRelease() {
-        return release;
+    public String getRegister() {
+        return register;
     }
 
-    public void setRelease(int release) {
-        if (release == 0) {
-            this.release = "";
-        } else {
-            this.release = "" + release;
-        }
-    }
-
-    public String getArtistId() {
-        return artistId;
-    }
-
-    public void setArtistId(int artistId) {
-        if (artistId == 0) {
-            this.artistId = "";
-        } else {
-            this.artistId = "" + artistId;
-        }
+    public void setRegister(String register) {
+        this.register = register;
     }
 
     @Override
     public String toString() {
-        return "CbrRecommender [age=" + age + ", country=" + country + ", gender=" + gender + ", duration=" + duration + ", tag=" + tag + ", release=" + release + ", artistId=" + artistId + "]";
+        return "CbrRecommender [userTrackDao=" + userTrackDao + ", age=" + age + ", country=" + country + ", gender=" + gender + ", register=" + register + ", tag=" + tag + "]";
     }
-    
+
+    public List<UserTrack> getRecommendations(String age, String country, String gender, String register, String tag, int userId) {
+        setAge(age);
+        setCountry(country);
+        setGender(gender);
+        setRegister(register);
+        setTag(tag);
+        setUserId(userId);
+        OntModel model = loadCbrModel(cbrDataFilePath);
+        OntClass caseObj = model.createClass(namespace + "RECOMMEND_CASE");
+        List<Individual> modelInstances = getInstanceList(model, caseObj);
+        Map<String, Integer> distanceMap = sortByComparator(compareInstanceWithModelInstances(model, modelInstances), false);
+
+        int counter = 1;
+        List<UserTrack> recommends = new ArrayList<UserTrack>();
+        for (Map.Entry<String, Integer> entry : distanceMap.entrySet()) {
+            UserTrack selected = userTrackDao.findUserTrack(Integer.parseInt(entry.getKey().substring(1)));
+            selected.setRecommendationValue(entry.getValue());
+            selected.setRecommendationSource("cbr-based");
+            recommends.add(selected);
+            if (counter == 5) {
+                break;
+            }
+            counter++;
+        }
+        return recommends;
+    }
+
+    public void createIndividualForUser(OntModel model, Listening listening) {
+        OntClass obj = model.createClass(namespace + "RECOMMEND_CASE");
+        Individual instance = obj.createIndividual(namespace + "I" + listening.getTrack().getId());
+
+        System.out.println(listening.getUser().getGender());
+        System.out.println(listening.getUser().getCountry());
+        System.out.println(listening.getUser().getAgeCol());
+        System.out.println(listening.getUser().getRegisterCol());
+        System.out.println(listening.getTrack().getTags());
+
+        obj = null;
+
+        // instance.addProperty(genderProp,
+        // model.createTypedLiteral(listening.getUser().getGender()));
+        // instance.addProperty(countryProp,
+        // model.createTypedLiteral(listening.getUser().getCountry()));
+        // instance.addProperty(ageProp,
+        // model.createTypedLiteral(listening.getUser().getAgeCol()));
+        // instance.addProperty(registerProp,
+        // model.createTypedLiteral(listening.getUser().getRegisterCol()));
+
+    }
+
+    public OntModel loadCbrModel(String filePath) {
+        OntModel model = null;
+        try {
+            model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+            InputStream in = new FileInputStream(filePath);
+            model.read(in, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ageProp = model.getObjectProperty(namespace + "HAS-AGE");
+        countryProp = model.getObjectProperty(namespace + "HAS-COUNTRY");
+        genderProp = model.getObjectProperty(namespace + "HAS-GENDER");
+        registerProp = model.getObjectProperty(namespace + "HAS-REGISTER");
+        return model;
+    }
+
+    public void saveIntances(OntModel model, String filepath) {
+        FileWriter out;
+        try {
+            out = new FileWriter(filepath);
+            model.write(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Map<String, Integer> compareInstanceWithModelInstances(OntModel model, List<Individual> modelInstances) {
+        Map<String, Integer> distanceMap = new HashMap<String, Integer>();
+        for (Individual selectedIndividual : modelInstances) {
+            int value = compareProperties(selectedIndividual);
+            distanceMap.put(selectedIndividual.getLocalName(), value);
+        }
+        return distanceMap;
+    }
+
+    public int compareProperties(Individual selectedIndividual) {
+        int value = 0;
+
+        StmtIterator comparedProps = selectedIndividual.listProperties(ageProp);
+
+        while (comparedProps.hasNext()) {
+            Statement comparedStatement = (Statement) comparedProps.next();
+            Object comparedObj = comparedStatement.getLiteral().getValue();
+            if (getAge().length() > 0 && getAge().equals(comparedObj.toString())) {
+                value += 2;
+            }
+        }
+
+        comparedProps = selectedIndividual.listProperties(genderProp);
+        while (comparedProps.hasNext()) {
+            Statement comparedStatement = (Statement) comparedProps.next();
+            Object comparedObj = comparedStatement.getLiteral().getValue();
+            if (getGender().length() > 0 && getGender().equals(comparedObj.toString())) {
+                value += 2;
+            }
+        }
+
+        comparedProps = selectedIndividual.listProperties(countryProp);
+        while (comparedProps.hasNext()) {
+            Statement comparedStatement = (Statement) comparedProps.next();
+            Object comparedObj = comparedStatement.getLiteral().getValue();
+            if (getCountry().length() > 0 && getCountry().equals(comparedObj.toString())) {
+                value += 2;
+            }
+        }
+
+        comparedProps = selectedIndividual.listProperties(registerProp);
+        while (comparedProps.hasNext()) {
+            Statement comparedStatement = (Statement) comparedProps.next();
+            Object comparedObj = comparedStatement.getLiteral().getValue();
+            if (getRegister().length() > 0 && getRegister().equals(comparedObj.toString())) {
+                value += 2;
+            }
+        }
+
+        comparedProps = null;
+
+        StmtIterator testedProps = selectedIndividual.listProperties();
+        while (testedProps.hasNext()) {
+            Statement testedStatement = (Statement) testedProps.next();
+            String localName = testedStatement.getPredicate().getLocalName();
+            if (!localName.equals("HAS-AGE") && !localName.equals("HAS-COUNTRY") && !localName.equals("HAS-REGISTER") && !localName.equals("HAS-ARTIST") && !localName.equals("HAS-SELF_VIEW") && !localName.equals("HAS-PLAY_COUNT") && !localName.equals("HAS-LISTENER") && !localName.equals("HAS-DURATION") && !localName.equals("type") && !localName.equals("HAS-GENDER")) {
+                for (String tag : getTag()) {
+                    if (localName.equals(tag)) {
+                        value += 1;
+                        break;
+                    }
+                }
+            }
+        }
+        testedProps = null;
+        return value;
+    }
+
+    public List<Individual> getInstanceList(OntModel model, OntClass caseObj) {
+        ExtendedIterator instances = caseObj.listInstances();
+        List<Individual> individualList = new ArrayList<Individual>();
+        while (instances.hasNext()) {
+            individualList.add(model.getIndividual(instances.next().toString()));
+        }
+        System.out.println("instance list size: " + individualList.size());
+        return individualList;
+    }
+
     public Map<String, Integer> sortByComparator(Map<String, Integer> unsortMap, final boolean order) {
 
         List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unsortMap.entrySet());
@@ -320,7 +271,6 @@ public class CbrRecommender {
                     return o1.getValue().compareTo(o2.getValue());
                 } else {
                     return o2.getValue().compareTo(o1.getValue());
-
                 }
             }
         });
@@ -330,19 +280,7 @@ public class CbrRecommender {
         for (Entry<String, Integer> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
-
         return sortedMap;
-    }
-
-    public void printMap(Map<String, Integer> map, int limit) {
-        int value = 0;
-        for (Entry<String, Integer> entry : map.entrySet()) {
-            value += 1;
-            System.out.println("Key : " + entry.getKey() + " Value : " + entry.getValue());
-            if (value == limit) {
-                break;
-            }
-        }
     }
 
 }

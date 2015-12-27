@@ -11,15 +11,14 @@
 <script type="text/javascript" src="${rootURL}resources/js/views/TrackView.js"></script>
 <script type="text/javascript" src="${rootURL}resources/js/models/TrackModel.js"></script>
 <script type="text/javascript">
+    var tags = Constant.Tags.toptags.tag;
+    var html = "";
+    for (var i = 0; i < tags.length; i++) {
+        html += "<option value='" + tags[i].name + "'>" + tags[i].name + "</option>";
+        $("#recommend_tag").html(html);
+    }
 
-	var tags = Constant.Tags.toptags.tag;
-	var html = "";
-	for (var i = 0; i < tags.length; i++) {
-		html += "<option value='" + tags[i].name + "'>" + tags[i].name + "</option>";
-		$("#recommend_tag").html(html);
-	}
-
-	$(document).ready(function() {
-		TrackView = new TrackView();
-	});
+    $(document).ready(function() {
+        TrackView = new TrackView();
+    });
 </script>

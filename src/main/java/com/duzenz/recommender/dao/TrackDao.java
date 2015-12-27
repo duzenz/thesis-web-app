@@ -6,16 +6,16 @@ import com.duzenz.recommender.entities.Track;
 
 public interface TrackDao {
 
-	public List<Track> findAll();
+    public List<Track> findAll();
 
-	public Track findTrack(int trackId);
+    public Track findTrack(int trackId);
 
-	public Track findTrackWithLastFmId(String trackId);
+    public Track findTrackWithLastFmId(String trackId);
 
-	public long getTrackCount();
-	
-	public List<Track> searchTrack(String label);
-	
-	public Track updateTrack(Track track);
+    public long getTrackCount();
+
+    public List<Track> searchTrack(String label);
+
+    public Track updateTrack(Track track);
 
 }

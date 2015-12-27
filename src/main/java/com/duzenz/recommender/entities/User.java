@@ -17,76 +17,75 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "USERS")
 public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-	
-	private String name;
-	
-	@Column(nullable = false, unique = true)
-	private String email;
-	
-	@Column(nullable = false)
-	private String password;
-	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
-	private Set<Role> roles = new HashSet<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
-	public User() {
-	}
+    private String name;
 
-	public User(int id, String name, String email, String password) {
-		this.id = id;
-		this.name = name;
-		this.email = email;
-		this.password = password;
-	}
-	
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email
-				+ ", password=" + password + ", roles=" + roles + "]";
-	}
+    @Column(nullable = false, unique = true)
+    private String email;
 
-	public int getId() {
-		return id;
-	}
+    @Column(nullable = false)
+    private String password;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private Set<Role> roles = new HashSet<>();
 
-	public String getName() {
-		return name;
-	}
+    public User() {
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public User(int id, String name, String email, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", roles=" + roles + "]";
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Set<Role> getRoles() {
-		return roles;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
 }

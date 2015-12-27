@@ -7,26 +7,23 @@ import com.duzenz.recommender.entities.Listening;
 
 public interface ListeningDao {
 
-	public Listening findListening(int id);
+    public Listening findListening(int id);
 
-	public void updateArtist(String artistId, int id);
+    public List<Listening> findListeningOfTrack(int trackId);
 
-	public List<Listening> findListeningOfTrack(int trackId);
-	
-	public List<Listening> findListeningOfArtist(int artistId);
-	
-	public long getAgeIntervalListenCount(int ageMin, int ageMax);
-	
-	public long getUserCountWithListeningCount(long minListenCount, long maxListenCount);
-	
-	public long getTrackListeningCountBetweenDates(Date minDate, Date maxDate);
-	
-	public long getListeningCountOfTrackBetweenDates(int trackId, Date minDate, Date maxDate);
-	
-	public List<Listening> getListeningOfTrackBetweenDates(int trackId, Date minDate, Date maxDate);
-	
-	public long getListeningCountOfUserBetweenDates(int userId, Date minDate, Date maxDate);
-	
-	public List<Listening> getListeningOfUserBetweenDates(int userId, Date minDate, Date maxDate);
-	
+    public long getAgeIntervalListenCount(int ageMin, int ageMax);
+
+    public long getUserCountWithListeningCount(long minListenCount, long maxListenCount);
+
+    public long getTrackListeningCountBetweenDates(Date minDate, Date maxDate);
+
+    public long getListeningCountOfTrackBetweenDates(int trackId, Date minDate, Date maxDate);
+
+    public List<Listening> getListeningOfTrackBetweenDates(int trackId, Date minDate, Date maxDate);
+
+    public long getListeningCountOfUserBetweenDates(int userId, Date minDate, Date maxDate);
+
+    public List<Listening> getListeningOfUserBetweenDates(int userId, Date minDate, Date maxDate);
+
+    public Listening insertListening(Listening listening);
 }
