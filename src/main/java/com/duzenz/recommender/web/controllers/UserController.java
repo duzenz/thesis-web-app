@@ -3,7 +3,6 @@ package com.duzenz.recommender.web.controllers;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -50,7 +49,7 @@ public class UserController {
             if (userId != 0 && user.getRoles().size() > 0 && !isAdmin) {
                 DataUser dataUser = dataUserDao.findwithLastFmId("" + user.getId());
                 if (dataUser != null) {
-                    return "{'userId':" + user.getId() + ",'age':" + dataUser.getAge() + ",'register':" + dataUser.getRegisterCol() + ",'country':'" + dataUser.getCountry() + "', 'gender':'" + dataUser.getGender() + "'}";
+                    return "{'dataUserId':" + dataUser.getId() + ",'userId':" + user.getId() + ",'age':" + dataUser.getAge() + ",'register':" + dataUser.getRegisterCol() + ",'country':'" + dataUser.getCountry() + "', 'gender':'" + dataUser.getGender() + "'}";
                 }
             }
             if (isAdmin) {
