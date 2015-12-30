@@ -95,10 +95,10 @@ body.loading .modal {
 }
 
 .form-group .pui-listbox {
-	width:200px;
+	width: 370px;
 }
 
 .recommend_save_btn {
-	margin-top:20px;
-	float:right;
+	margin-top: 20px;
+	float: right;
 }

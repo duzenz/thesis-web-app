@@ -1,4 +1,4 @@
-<div class="col-md-3">
+<div class="col-md-4">
 
     <div class="header">
         <h3 class="dark-grey">
@@ -29,7 +29,8 @@
         </div>
 
         <div class="form-group">
-            <label style="display: block"><spring:message code="recommend.tag" /></label> <select id="recommend_tag" name="recommend_tag" style="width: 100%" multiple="multiple">
+            <label style="display: block"><spring:message code="recommend.tag" /></label> 
+            <select id="recommend_tag" name="recommend_tag" style="width: 100%" multiple="multiple">
             </select>
         </div>
 

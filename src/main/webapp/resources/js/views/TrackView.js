@@ -61,7 +61,7 @@ BaseView("TrackView", {}, {
                 if ($("#" + $(data[i].check).attr("id")).is(":checked")) {
                     var obj = {};
                     obj.user = {
-                        id : Constant.User.userId
+                        id : Constant.User.dataUserId
                     };
                     obj.track = {
                         id : parseInt($(data[i].check).attr("data-track-id"))
@@ -71,10 +71,20 @@ BaseView("TrackView", {}, {
                     listenings.push(obj);
                 }
             }
+            if (listenings.length < 1) {
+                self.showFailPopup("Hiç bir tavsiye seçmediniz");
+                return false;
+            }
             self.trackModel.updateEngines(listenings).done(function(res) {
-                console.log(res);
+                if (res) {
+                    $('.result-table-container').html("");
+                    $('#recommend_tag').puilistbox('unselectAll');
+                    self.showSuccessPopup("Tavsiye kaydı başarılı oldu.");
+                } else {
+                    self.showFailPopup("Tavsiye kaydı sırasında hata oluştu.")
+                }
             }).fail(function(res) {
-                console.log("Error happened");
+                self.showFailPopup("Tavsiye kaydı sırasında hata oluştu.");
             });
         });
 
@@ -82,17 +92,19 @@ BaseView("TrackView", {}, {
             var tag = "";
             if ($("#recommend_tag").val() != null) {
                 tag = $("#recommend_tag").val().toString();
+            } else {
+                self.showFailPopup("Tag alanını doldurmanız beklenmektedir");
+                return false;
             }
 
             $('.result-table-container').html("");
 
-            // TODO user id fix
-            self.trackModel.getRecommendations(13, self.getUserAgeCol(Constant.User.age), Constant.User.country, Constant.User.gender, Constant.User.register, tag).done(function(res) {
+            self.trackModel.getRecommendations(Constant.User.dataUserId, self.getUserAgeCol(Constant.User.age), Constant.User.country, Constant.User.gender, Constant.User.register, tag).done(function(res) {
                 if (res) {
                     self.createRecommendTable(res);
                 }
             }).fail(function(res) {
-                console.log("Error occured");
+                self.showFailPopup("Tavsiyeleri alırken hata oluştu");
             });
         });
     },
@@ -137,25 +149,5 @@ BaseView("TrackView", {}, {
         });
         $('.result-table-container').append("<button class='btn recommend_save_btn' id='save_recommendations'>Save</button>")
     },
-
-    getUserAgeCol : function(age) {
-        var ageCol = "";
-        if (age > 0) {
-            if (age <= 17) {
-                ageCol = "0-17";
-            } else if (age > 17 && age <= 24) {
-                ageCol = "18-24";
-            } else if (age > 24 && age <= 30) {
-                ageCol = "25-30";
-            } else if (age > 30 && age <= 40) {
-                ageCol = "31-40";
-            } else if (age > 40 && age <= 50) {
-                ageCol = "41-50";
-            } else {
-                ageCol = "51-100";
-            }
-        }
-        return ageCol;
-    }
 
 });
