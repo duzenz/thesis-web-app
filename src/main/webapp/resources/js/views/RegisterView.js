@@ -18,11 +18,7 @@ BaseView("RegisterView", {}, {
         this.loginBtn.on("click", function() {
             var password = self.loginPassword.val();
             if (password.length < 4 || password.length > 8) {
-                $('#default').puigrowl('show', [ {
-                    severity : 'error',
-                    summary : 'Error',
-                    detail : 'Girilen şifre 4 - 8 karakter arası olmalıdır.'
-                } ]);
+                self.showFailPopup(Constant.Translation.password_validation_fail);
                 return false;
             }
         });
@@ -36,17 +32,9 @@ BaseView("RegisterView", {}, {
             var userObj = {};
 
             if (username == "" || age == "0" || country == "0" || gender == "0" || password == "") {
-                $('#default').puigrowl('show', [ {
-                    severity : 'error',
-                    summary : 'Error',
-                    detail : 'Tüm alanları doldurmanız gerekmektedir'
-                } ]);
+                self.showFailPopup(Constant.Translation.form_fill_fail);
             } else if (password.length < 4 || password.length > 8) {
-                $('#default').puigrowl('show', [ {
-                    severity : 'error',
-                    summary : 'Error',
-                    detail : 'Girilen şifre 4 - 8 karakter arası olmalıdır.'
-                } ]);
+                self.showFailPopup(Constant.Translation.password_validation_fail);
             } else {
                 userObj.id = "";
                 userObj.password = password;
@@ -72,49 +60,16 @@ BaseView("RegisterView", {}, {
                     lastfmObj.ageCol = self.getUserAgeCol(age);
                     lastfmObj.registerCol = yyyy;
                     self.registerModel.createLastFmUser(lastfmObj).done(function() {
-                        $('#default').puigrowl('show', [ {
-                            severity : 'info',
-                            summary : 'Info',
-                            detail : 'Kullanıcı oluşturma işlemi başarılı'
-                        } ]);
+                        self.showSuccessPopup(Constant.Translation.user_create_success);
                         self.clearRegisterForm();
                     }).fail(function(res) {
-                        $('#default').puigrowl('show', [ {
-                            severity : 'error',
-                            summary : 'Error',
-                            detail : 'Kullanıcı oluşturma işlemi başarısız'
-                        } ]);
+                        self.showFailPopup(Constant.Translation.user_create_fail);
                     });
                 }).fail(function(res) {
-                    $('#default').puigrowl('show', [ {
-                        severity : 'error',
-                        summary : 'Error',
-                        detail : 'Kullanıcı oluşturma işlemi başarısız'
-                    } ]);
+                   self. showFailPopup(Constant.Translation.user_create_fail);   
                 });
             }
         });
-
-    },
-
-    getUserAgeCol : function(age) {
-        var ageCol = "";
-        if (age > 0) {
-            if (age <= 17) {
-                ageCol = "0-17";
-            } else if (age > 17 && age <= 24) {
-                ageCol = "18-24";
-            } else if (age > 24 && age <= 30) {
-                ageCol = "25-30";
-            } else if (age > 30 && age <= 40) {
-                ageCol = "31-40";
-            } else if (age > 40 && age <= 50) {
-                ageCol = "41-50";
-            } else {
-                ageCol = "51-100";
-            }
-        }
-        return ageCol;
     },
 
     clearRegisterForm : function() {

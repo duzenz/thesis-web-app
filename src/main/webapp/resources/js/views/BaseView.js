@@ -4,8 +4,9 @@ $(document).ready(function() {
 
 Constant("BaseView", {}, {
     init : function() {
-        console.log("Base view initialized");
         this.document = $(document);
+        this.translateEnBtn = $("#locale_to_en");
+        this.translateTrBtn = $("#locale_to_tr");
         this.body = $("body");
         this.bindEvents();
     },
@@ -34,20 +35,27 @@ Constant("BaseView", {}, {
                 self.body.removeClass("loading");
             }
         });
+        this.translateEnBtn.on("click", function() {
+            window.location = "?lang=en";
+        });
+
+        this.translateTrBtn.on("click", function() {
+            window.location = "?lang=tr_TR";
+        });
         $('#default').puigrowl();
     },
 
     getCurrentDate : function() {
         var d = new Date();
         var yyyy = d.getFullYear().toString();
-        var mm = (d.getMonth() + 1).toString(); // getMonth() is zero-based
+        var mm = (d.getMonth() + 1).toString();
         var dd = d.getDate().toString();
         var hh = d.getHours().toString();
         var min = d.getMinutes().toString();
         var ss = d.getSeconds().toString();
         return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]) + " " + (hh[1] ? hh : "0" + hh[0]) + ":" + (min[1] ? min : "0" + min[0]) + ":" + (ss[1] ? ss : "0" + ss[0]);
     },
-    
+
     showSuccessPopup : function(message) {
         $('#default').puigrowl('show', [ {
             severity : 'info',
@@ -55,7 +63,7 @@ Constant("BaseView", {}, {
             detail : message
         } ]);
     },
-    
+
     showFailPopup : function(message) {
         $('#default').puigrowl('show', [ {
             severity : 'error',
@@ -63,7 +71,7 @@ Constant("BaseView", {}, {
             detail : message
         } ]);
     },
-    
+
     getUserAgeCol : function(age) {
         var ageCol = "";
         if (age > 0) {
@@ -83,23 +91,22 @@ Constant("BaseView", {}, {
         }
         return ageCol;
     },
-    
-    clearElements: function(target) {
+
+    clearElements : function(target) {
         $(target).find(':input').each(function() {
-          switch (this.type) {
-              case 'password':
-              case 'text':
-              case 'textarea':
-              case 'file':
-              case 'select-one':
-              case 'select-multiple':
-                  $(this).val('');
-                  break;
-              case 'checkbox':
-              case 'radio':
-                  this.checked = false;
-          }
-      });
+            switch (this.type) {
+                case 'password':
+                case 'text':
+                case 'textarea':
+                case 'file':
+                case 'select-one':
+                case 'select-multiple':
+                    $(this).val('');
+                    break;
+                case 'checkbox':
+                case 'radio':
+                    this.checked = false;
+            }
+        });
     },
-    
 });

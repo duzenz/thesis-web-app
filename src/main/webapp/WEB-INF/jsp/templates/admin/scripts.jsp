@@ -6,10 +6,10 @@
 <script type="text/javascript" src="${rootURL}resources/js/Constant.js"></script>
 <script type="text/javascript" src="${rootURL}resources/js/views/BaseView.js"></script>
 <script type="text/javascript" src="${rootURL}resources/js/models/BaseModel.js"></script>
-<script type="text/javascript" src="${rootURL}resources/js/views/ProfileView.js"></script>
-<script type="text/javascript" src="${rootURL}resources/js/models/ProfileModel.js"></script>
+<script type="text/javascript" src="${rootURL}resources/js/views/AdminProfileView.js"></script>
+<script type="text/javascript" src="${rootURL}resources/js/models/AdminProfileModel.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        ProfileView = new ProfileView();
+        AdminProfileView = new AdminProfileView();
     });
 </script>

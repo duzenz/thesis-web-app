@@ -20,39 +20,19 @@ BaseView("ProfileView", {}, {
                     if (res) {
                         self.profileModel.saveNewPassword(newPassword).done(function(res) {
                             if (res) {
-                                $('#default').puigrowl('show', [ {
-                                    severity : 'info',
-                                    summary : 'Info',
-                                    detail : 'Şifre başarıyla değiştirildi.'
-                                } ]);
+                                self.showSuccessPopup(Constant.Translation.password_success);
                                 self.clearRegisterForm();
                             } else {
-                                $('#default').puigrowl('show', [ {
-                                    severity : 'error',
-                                    summary : 'Error',
-                                    detail : 'Yeni şifre kaydı başarısız oldu!'
-                                } ]);
+                                self.showFailPopup(Constant.Translation.password_fail);
                             }
                         }).fail(function(res) {
-                            $('#default').puigrowl('show', [ {
-                                severity : 'error',
-                                summary : 'Error',
-                                detail : 'Yeni şifre kaydı başarısız oldu!'
-                            } ]);
+                            self.showFailPopup(Constant.Translation.password_fail);
                         });
                     } else {
-                        $('#default').puigrowl('show', [ {
-                            severity : 'error',
-                            summary : 'Error',
-                            detail : 'Eski şifrenizi yanlış girdiniz!'
-                        } ]);
+                        self.showFailPopup(Constant.Translation.password_old_fail);
                     }
                 }).fail(function(res) {
-                    $('#default').puigrowl('show', [ {
-                        severity : 'error',
-                        summary : 'Error',
-                        detail : 'Şifre değiştirme işlemi başarısız!'
-                    } ]);
+                    self.showFailPopup(Constant.Translation.password_change_fail);
                 });
             }
         });
@@ -63,39 +43,24 @@ BaseView("ProfileView", {}, {
     },
 
     validatePasswords : function(oldPassword, newPassword, repeatedPassword) {
+        var self = this;
         if (oldPassword.length < 4 || oldPassword.length > 8) {
-            $('#default').puigrowl('show', [ {
-                severity : 'error',
-                summary : 'Error',
-                detail : 'Girilen şifreler 4 - 8 karakter arası olmalıdır.'
-            } ]);
+            self.showFailPopup(Constant.Translation.password_validation_fail);
             return false;
         }
 
         if (newPassword.length < 4 || newPassword.length > 8) {
-            $('#default').puigrowl('show', [ {
-                severity : 'error',
-                summary : 'Error',
-                detail : 'Girilen şifreler 4 - 8 karakter arası olmalıdır.'
-            } ]);
+            self.showFailPopup(Constant.Translation.password_validation_fail);
             return false;
         }
 
         if (repeatedPassword.length < 4 || repeatedPassword.length > 8) {
-            $('#default').puigrowl('show', [ {
-                severity : 'error',
-                summary : 'Error',
-                detail : 'Girilen şifreler 4 - 8 karakter arası olmalıdır.'
-            } ]);
+            self.showFailPopup(Constant.Translation.password_validation_fail);
             return false;
         }
 
         if (newPassword != repeatedPassword) {
-            $('#default').puigrowl('show', [ {
-                severity : 'error',
-                summary : 'Error',
-                detail : 'Yeni şifre alanları birbiriyle uyuşmamaktadır.'
-            } ]);
+            self.showFailPopup(Constant.Translation.password_repeated_fail);
             return false;
         }
         return true;

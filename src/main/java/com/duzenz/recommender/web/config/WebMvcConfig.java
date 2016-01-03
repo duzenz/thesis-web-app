@@ -1,5 +1,6 @@
 package com.duzenz.recommender.web.config;
 
+import java.util.Locale;
 import java.util.Properties;
 
 import org.springframework.context.MessageSource;
@@ -71,6 +72,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
+        cookieLocaleResolver.setDefaultLocale(new Locale("tr", "TR"));
         return cookieLocaleResolver;
     }
 

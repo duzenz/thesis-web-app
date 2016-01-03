@@ -25,6 +25,7 @@
             </sec:authorize>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="${rootUrl}logout"><spring:message code="navigator.logout" /></a></li>
+                <li><a href="javascript:void(0)"> <span id="locale_to_en">EN</span> | <span id="locale_to_tr">TR</span></a></li>
             </ul>
         </div>
     </div>

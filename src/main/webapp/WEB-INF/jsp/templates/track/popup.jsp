@@ -1,27 +1,27 @@
-<div id="dlg" title="Header" class="not-visible">
+<div id="dlg" title="<spring:message code='js.track' />" class="not-visible">
     <div>
         <p>
-            <label>Track Name: </label> <span id="track_name"></span>
+            <label><spring:message code='popup.trackname' />: </label> <span id="track_name"></span>
         </p>
         <p>
-            <label>Play url: </label> <a href='#' target="_blank"> <span id="play_url"></span>
+            <label><spring:message code='popup.playurl' />: </label> <a href='#' target="_blank"> <span id="play_url"></span>
             </a>
         </p>
         <p>
-            <label>Album Name: </label> <span id="album_name"></span>
+            <label><spring:message code='popup.albumname' />: </label> <span id="album_name"></span>
         </p>
         <p>
-            <label>Album Url: </label> <a href='#' target="_blank"> <span id="album_url"></span>
+            <label><spring:message code='popup.albumurl' />: </label> <a href='#' target="_blank"> <span id="album_url"></span>
             </a>
         </p>
         <p>
-            <label>Duration: </label> <span id="duration"></span>
+            <label><spring:message code='popup.duration' />: </label> <span id="duration"></span>
         </p>
         <p>
-            <label>Artist name: </label> <span id="artist_name"></span>
+            <label><spring:message code='popup.artistname' />: </label> <span id="artist_name"></span>
         </p>
         <p>
-            <label>Artist url: </label> <a href='#' target="_blank"> <span id="artist_url"></span>
+            <label><spring:message code='popup.artisturl' />: </label> <a href='#' target="_blank"> <span id="artist_url"></span>
             </a>
         </p>
     </div>

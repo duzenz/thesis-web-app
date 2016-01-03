@@ -34,12 +34,9 @@ public class UserTrack {
     @Transient
     private String recommendationSource;
 
-    @Transient
-    private String artistId;
-
     @Override
     public String toString() {
-        return "UserTrack [id=" + id + ", user=" + user + ", track=" + track + ", listenCount=" + listenCount + ", recommendationValue=" + recommendationValue + ", recommendationSource=" + recommendationSource + ", artistId=" + artistId + "]";
+        return "UserTrack [id=" + id + ", user=" + user + ", track=" + track + ", listenCount=" + listenCount + ", recommendationValue=" + recommendationValue + ", recommendationSource=" + recommendationSource + "]";
     }
 
     public int getId() {
@@ -88,14 +85,6 @@ public class UserTrack {
 
     public void setRecommendationSource(String recommendationSource) {
         this.recommendationSource = recommendationSource;
-    }
-
-    public String getArtistId() {
-        return artistId;
-    }
-
-    public void setArtistId(String artistId) {
-        this.artistId = artistId;
     }
 
 }

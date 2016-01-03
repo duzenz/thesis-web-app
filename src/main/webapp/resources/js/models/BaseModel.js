@@ -1,6 +1,5 @@
 Constant("BaseModel", {}, {
     init : function() {
-        console.log("Base Model initialized");
     },
 
     makeRequest : function(url, data, type, stringify) {

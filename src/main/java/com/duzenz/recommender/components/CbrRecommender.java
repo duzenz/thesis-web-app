@@ -18,8 +18,10 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.duzenz.recommender.dao.TrackDao;
 import com.duzenz.recommender.dao.UserTrackDao;
 import com.duzenz.recommender.entities.Listening;
+import com.duzenz.recommender.entities.Track;
 import com.duzenz.recommender.entities.UserTrack;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
@@ -36,6 +38,8 @@ public class CbrRecommender {
 
     @Autowired
     private UserTrackDao userTrackDao;
+    @Autowired
+    private TrackDao trackDao;
 
     public static final String cbrDataFilePath = "D:\\thesis\\recommenderApp\\data\\training_cbr.owl";
     public static final String namespace = "http://www.example.com/ontologies/recommend.owl#";
@@ -121,7 +125,10 @@ public class CbrRecommender {
         int counter = 1;
         List<UserTrack> recommends = new ArrayList<UserTrack>();
         for (Map.Entry<String, Integer> entry : distanceMap.entrySet()) {
-            UserTrack selected = userTrackDao.findUserTrack(Integer.parseInt(entry.getKey().substring(1)));
+            Track track = trackDao.findTrack(Integer.parseInt(entry.getKey().substring(1)));
+            UserTrack selected = new UserTrack();
+            selected.setId(track.getId());
+            selected.setTrack(track);
             selected.setRecommendationValue(entry.getValue());
             selected.setRecommendationSource("cbr-based");
             recommends.add(selected);
@@ -137,23 +144,42 @@ public class CbrRecommender {
         OntClass obj = model.createClass(namespace + "RECOMMEND_CASE");
         Individual instance = obj.createIndividual(namespace + "I" + listening.getTrack().getId());
 
-        System.out.println(listening.getUser().getGender());
-        System.out.println(listening.getUser().getCountry());
-        System.out.println(listening.getUser().getAgeCol());
-        System.out.println(listening.getUser().getRegisterCol());
-        System.out.println(listening.getTrack().getTags());
+        instance.addProperty(genderProp, listening.getUser().getGender());
+        instance.addProperty(countryProp, listening.getUser().getCountry());
+        instance.addProperty(ageProp, listening.getUser().getAgeCol());
+        instance.addProperty(registerProp, listening.getUser().getRegisterCol());
 
-        obj = null;
+        for (String t : tag) {
+            ObjectProperty tagProp = model.getObjectProperty(namespace + t.replace("\"", "").replaceAll("-", "_").replaceAll("\\s+", "_").replaceAll("#", ""));
+            if (tagProp != null) {
+                instance.addProperty(tagProp, "true");
+            }
+        }
+    }
 
-        // instance.addProperty(genderProp,
-        // model.createTypedLiteral(listening.getUser().getGender()));
-        // instance.addProperty(countryProp,
-        // model.createTypedLiteral(listening.getUser().getCountry()));
-        // instance.addProperty(ageProp,
-        // model.createTypedLiteral(listening.getUser().getAgeCol()));
-        // instance.addProperty(registerProp,
-        // model.createTypedLiteral(listening.getUser().getRegisterCol()));
+    public void updateIndividualForUser(OntModel model, Listening listening) {
+        Individual individual = model.getIndividual(namespace + "I" + listening.getTrack().getId());
+        updateProperty(individual, ageProp, listening.getUser().getAgeCol());
+        updateProperty(individual, countryProp, listening.getUser().getCountry());
+        updateProperty(individual, genderProp, listening.getUser().getGender());
+        updateProperty(individual, registerProp, listening.getUser().getRegisterCol());
+    }
 
+    private void updateProperty(Individual individual, ObjectProperty prop, String columnValue) {
+        int propCount = 0;
+        int foundCount = 0;
+        StmtIterator comparedProps = individual.listProperties(prop);
+        while (comparedProps.hasNext()) {
+            propCount++;
+            Statement comparedStatement = (Statement) comparedProps.next();
+            Object comparedObj = comparedStatement.getLiteral().getValue();
+            if (columnValue.equals(comparedObj.toString().trim())) {
+                foundCount++;
+            }
+        }
+        if (propCount != foundCount) {
+            individual.addProperty(prop, columnValue);
+        }
     }
 
     public OntModel loadCbrModel(String filePath) {

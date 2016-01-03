@@ -59,6 +59,9 @@ public class UserTrackImpl implements UserTrackDao {
         return userTrack;
     }
 
+    /**
+     * TODO make query constant
+     */
     @Override
     public void saveUserTracksAsCsv() {
         final String query = "SELECT user_id,track_id,listen_count INTO OUTFILE 'D:/thesis/recommenderApp/data/training_cf.csv' FIELDS TERMINATED BY ',' FROM user_track order by user_id,track_id,listen_count";

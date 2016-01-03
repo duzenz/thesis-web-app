@@ -12,3 +12,4 @@
     window.session.user = <%=UserController.getCurrentUserJson()%>
 </script>
 
+<%@include file="head/translations.jsp"%>

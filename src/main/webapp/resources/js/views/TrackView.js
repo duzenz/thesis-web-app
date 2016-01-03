@@ -20,7 +20,7 @@ BaseView("TrackView", {}, {
 
     bindEvents : function() {
         var self = this;
-        $("#query_cftype").text("Kullanıcı Tabanlı");
+        $("#query_cftype").text(Constant.Translation.user_based);
         $('#recommend_tag').puilistbox({
             scrollHeight : 90,
             itemSelect : function(event, item) {
@@ -49,7 +49,7 @@ BaseView("TrackView", {}, {
                 $("#artist_url").parent("a").attr("href", res.track.artist.url);
                 $('#dlg').puidialog("show");
             }).fail(function(res) {
-                console.log("failed");
+                self.showFailPopup(Constant.Translation.get_track_fail);
             });
         });
 
@@ -72,19 +72,19 @@ BaseView("TrackView", {}, {
                 }
             }
             if (listenings.length < 1) {
-                self.showFailPopup("Hiç bir tavsiye seçmediniz");
+                self.showFailPopup(Constant.Translation.no_recommend_selected);
                 return false;
             }
             self.trackModel.updateEngines(listenings).done(function(res) {
                 if (res) {
                     $('.result-table-container').html("");
                     $('#recommend_tag').puilistbox('unselectAll');
-                    self.showSuccessPopup("Tavsiye kaydı başarılı oldu.");
+                    self.showSuccessPopup(Constant.Translation.recommend_save_success);
                 } else {
-                    self.showFailPopup("Tavsiye kaydı sırasında hata oluştu.")
+                    self.showFailPopup(Constant.Translation.recommend_save_fail);
                 }
             }).fail(function(res) {
-                self.showFailPopup("Tavsiye kaydı sırasında hata oluştu.");
+                self.showFailPopup(Constant.Translation.recommend_save_fail);
             });
         });
 
@@ -93,7 +93,7 @@ BaseView("TrackView", {}, {
             if ($("#recommend_tag").val() != null) {
                 tag = $("#recommend_tag").val().toString();
             } else {
-                self.showFailPopup("Tag alanını doldurmanız beklenmektedir");
+                self.showFailPopup(Constant.Translation.validate_tag);
                 return false;
             }
 
@@ -104,7 +104,7 @@ BaseView("TrackView", {}, {
                     self.createRecommendTable(res);
                 }
             }).fail(function(res) {
-                self.showFailPopup("Tavsiyeleri alırken hata oluştu");
+                self.showFailPopup(Constant.Translation.recommend_error);
             });
         });
     },
@@ -117,7 +117,7 @@ BaseView("TrackView", {}, {
                     + data[i].track.id + "'>";
             obj.mbid = data[i].track.trackId;
             obj.track = data[i].track.trackName;
-            obj.show = "<a href='#' class='show-popup' data-index='" + i + "' data-mbid='" + data[i].track.trackId + "'>Show</a>";
+            obj.show = "<a href='#' class='show-popup' data-index='" + i + "' data-mbid='" + data[i].track.trackId + "'>" + Constant.Translation.show + "</a>";
             filteredData.push(obj);
         }
 
@@ -131,23 +131,23 @@ BaseView("TrackView", {}, {
             "bInfo" : false,
             "data" : filteredData,
             "columns" : [ {
-                "title" : "Seç",
+                "title" : Constant.Translation.choose,
                 "data" : "check",
                 "width" : "10px"
             }, {
-                "title" : "Parça",
+                "title" : Constant.Translation.track,
                 "data" : "track"
             }, {
                 "title" : "mbid",
                 "data" : "mbid",
                 "visible" : false
             }, {
-                "title" : "Dinle",
+                "title" : Constant.Translation.listen,
                 "data" : "show",
                 "width" : "10px"
             } ]
         });
-        $('.result-table-container').append("<button class='btn recommend_save_btn' id='save_recommendations'>Save</button>")
+        $('.result-table-container').append("<button class='btn recommend_save_btn' id='save_recommendations'>" + Constant.Translation.save + "</button>")
     },
 
 });
